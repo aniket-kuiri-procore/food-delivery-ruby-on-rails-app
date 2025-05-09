@@ -1,0 +1,23 @@
+<h1>All Restaurants</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Restaurants ID</th>
+      <th>Name</th>
+      <th>Address</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @restaurants_list.each do |restaurant| %>
+      <tr>
+        <td><%= restaurant['restaurant_id'] %></td>
+        <td><%= restaurant['name'] %></td>
+        <td><%= restaurant['address'] %></td>
+        <td>
+          <%= link_to "View Menu", restaurant_path(restaurant_id: restaurant['restaurant_id']), class: "button" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

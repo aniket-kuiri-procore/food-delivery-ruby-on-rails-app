@@ -1,0 +1,13 @@
+<h1>Customer Details</h1>
+
+<p>Customer ID: <%= @customer_id %></p>
+
+<p>Name: <%= @name %></p>
+
+<p>Phone Number: <%= @phone_number %></p>
+
+<p>Address: <%= @address %></p>
+
+<p>This page will eventually display customer-specific details. Make tabs to get restaurants that redirects to resturant page</p>
+
+<button onclick="window.location.href='/customers/<%= @customer_id %>/restaurants'">Restaurants</button>

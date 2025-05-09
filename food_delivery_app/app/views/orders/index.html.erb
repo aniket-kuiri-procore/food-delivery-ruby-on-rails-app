@@ -1,0 +1,19 @@
+<h1>All Orders</h1>
+
+<% @order_details.each do |order| %>
+  <div>
+    <h3>Order ID: <%= order['order_id'] %></h3>
+    <h3>Customer ID: <%= order['customer_id'] %></h3>
+    <h3>Restaurant ID: <%= order['restaurant_id'] %></h3>
+    <h4>Items:</h4>
+    <ul>
+      <% order['items'].each do |item| %>
+        <li><%= item['name'] %> x <%= item['quantity'] %></li>
+      <% end %>
+    </ul>
+    <h3>Price: <%= order['price'] %></h3>
+    <h3>Executive ID: <%= order['executive_id'] %></h3>
+    <h3>Status: <%= order['status'] %></h3>
+    <hr>
+  </div>
+<% end %>

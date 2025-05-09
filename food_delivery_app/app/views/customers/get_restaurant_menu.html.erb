@@ -1,0 +1,127 @@
+<h1>Restaurant Details</h1>
+
+<p>Restaurant ID: <%= @restaurant_id %></p>
+<p>Name: <%= @name %></p>
+<p>Address: <%= @address %></p>
+
+<p>This page will eventually display restaurant-specific details.</p>
+
+<h2>Menu</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Food Name</th>
+      <th>Price</th>
+      <th>Description</th>
+      <th>Quantity</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @menu.each do |key, item| %>
+      <tr>
+        <td><%= item['name'] %></td>
+        <td><%= item['price'] %></td>
+        <td><%= item['description'] %></td>
+        <td><input type="number" id="qty_<%= item['name'] %>" value="1" min="1"></td>
+        <td><button onclick="addItemToOrder('<%= @customer_id %>', '<%= @restaurant_id %>', '<%= item['name'] %>', '<%= item['price'] %>')">Add</button></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div id="order-summary" style="margin-top: 20px;">
+  <h2>Order Summary</h2>
+  <ul id="order-items"></ul>
+  <p>Total: <span id="order-total">0</span></p>
+  <button onclick="placeOrder('<%= @customer_id %>', '<%= @restaurant_id %>')">Place Order</button>
+</div>
+
+<script>
+  let orderItems = [];
+  let orderTotal = 0;
+
+  function addItemToOrder(customerId, restaurantId, itemName, itemPrice) {
+    const quantityInput = document.getElementById(`qty_${itemName}`);
+    const quantity = parseInt(quantityInput.value);
+
+    if (isNaN(quantity) || quantity <= 0) {
+      alert('Please enter a valid quantity.');
+      return;
+    }
+
+    const existingItem = orderItems.find(item => item.itemName === itemName);
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      orderItems.push({ itemName, itemPrice, quantity });
+    }
+
+    orderTotal += quantity * itemPrice;
+
+    updateOrderSummary();
+  }
+
+  function updateOrderSummary() {
+    const orderItemsList = document.getElementById('order-items');
+    orderItemsList.innerHTML = ''; // Clear previous summary
+    orderItems.forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = `${item.itemName} x ${item.quantity} - $${(item.itemPrice * item.quantity).toFixed(2)}`;
+      orderItemsList.appendChild(li);
+    });
+
+    document.getElementById('order-total').textContent = orderTotal.toFixed(2);
+  }
+
+  function placeOrder(customerId, restaurantId) {
+    if (orderItems.length === 0) {
+      alert('Your order is empty!');
+      return;
+    }
+
+    const url = `/customers/${customerId}/orders`;
+    const orderData = {
+      restaurant_id: restaurantId,
+      items: orderItems.map(item => ({
+        name: item.itemName,
+        quantity: item.quantity
+      })),
+      total: orderTotal
+    };
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': getCSRFToken(), // Include CSRF token
+      },
+      body: JSON.stringify(orderData),
+    })
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        return response.json().then(errorData => {
+          throw new Error('Failed to place order: ' + (errorData.message || 'Unknown error'));
+        });
+      }
+    })
+    .then(data => {
+      alert('Order placed successfully! Order ID: ' + data.order_id);
+      window.location.href = `/customers/${customerId}/orders/${data.order_id}`; // Redirect to order confirmation page /customers/:customer_id/orders/:order_id
+    })
+    .catch(error => {
+      alert('Error: ' + error.message);
+    });
+  }
+
+  function getCSRFToken() {
+      const metaTag = document.querySelector('meta[name="csrf-token"]');
+      if (metaTag) {
+        return metaTag.content;
+      }
+      return null;
+    }
+
+</script>

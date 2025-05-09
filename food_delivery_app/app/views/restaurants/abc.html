@@ -1,0 +1,45 @@
+<script>
+  function addFoodItem(restaurantId) {
+    const foodName = document.getElementById('food_name').value;
+    const price = document.getElementById('price').value;
+    const description = document.getElementById('description').value;
+
+    // Basic validation (you should add more robust validation)
+    if (!foodName || !price || !description) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    // Construct the URL for the POST request
+    const url = `/restaurants/${restaurantId}/menu_items`;
+
+    // Create a FormData object to send the data
+    const data = {
+      food_name: foodName,
+      price: price,
+      description: description
+    };
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // Set the Content-Type header to application/json
+      },
+      body: JSON.stringify(data), // Convert the JavaScript object to a JSON string
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Food item added successfully!');
+        // Optionally, you could reload the page or update the menu table dynamically
+        window.location.reload(); // Simplest way to see the change
+      } else {
+        return response.json().then(errorData => {
+          alert('Failed to add food item: ' + (errorData.message || 'Unknown error'));
+        });
+      }
+    })
+    .catch(error => {
+      alert('Error: ' + error.message);
+    });
+  }
+</script>

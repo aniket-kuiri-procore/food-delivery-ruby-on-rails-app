@@ -1,0 +1,88 @@
+<h1>Restaurant Details</h1>
+
+<p>Restaurant ID: <%= @restaurant_id %></p>
+<p>Name: <%= @name %></p>
+<p>Address: <%= @address %></p>
+
+<p>This page will eventually display restaurant-specific details. Make tabs to get restaurants that redirects to restaurant page</p>
+
+<h2>Menu</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Food Name</th>
+      <th>Price</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @menu.each do |key, item| %>
+      <tr>
+        <td><%= item['name'] %></td>
+        <td><%= item['price'] %></td>
+        <td><%= item['description'] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<h2>Add New Food Item</h2>
+<div style="display: flex; gap: 10px; align-items: center;">
+  <input type="text" id="food_name" placeholder="Food Name">
+  <input type="text" id="price" placeholder="Price">
+  <input type="text" id="description" placeholder="Description">
+  <button onclick="addFoodItem('<%= @restaurant_id %>')">Add Food Item</button>
+</div>
+
+<script>
+  function getCSRFToken() {
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    if (metaTag) {
+      return metaTag.content;
+    }
+    return null;
+  }
+
+  function addFoodItem(restaurantId) {
+    const foodName = document.getElementById('food_name').value;
+    const price = document.getElementById('price').value;
+    const description = document.getElementById('description').value;
+    const csrfToken = getCSRFToken(); // Get the CSRF token
+
+    if (!foodName || !price || !description) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    const url = `/restaurants/${restaurantId}/menu_items`;
+
+    const data = {
+      food_name: foodName,
+      price: price,
+      description: description
+    };
+
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': csrfToken, // Include the CSRF token in the headers
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Food item added successfully!');
+        window.location.reload();
+      } else {
+        return response.json().then(errorData => {
+          alert('Failed to add food item: ' + (errorData.message || 'Unknown error'));
+        });
+      }
+    })
+    .catch(error => {
+      alert('Error: ' + error.message);
+    });
+  }
+</script>
+

@@ -1,0 +1,64 @@
+<h1>Assigned Orders</h1>
+
+<% @order_details.each do |order| %>
+  <div>
+    <h3>Order ID: <%= order['order_id'] %></h3>
+    <h3>Customer ID: <%= order['customer_id'] %></h3>
+    <h3>Restaurant ID: <%= order['restaurant_id'] %></h3>
+    <h3>Status: <%= order['status'] %></h3>
+    <div>
+      <button onclick="pickUpOrder('<%= @executive_id %>', '<%= order['order_id'] %>')">Pick Up</button>
+      <button onclick="deliverOrder('<%= @executive_id %>', '<%= order['order_id'] %>')">Deliver</button>
+    </div>
+    <hr>
+  </div>
+<% end %>
+
+
+<script>
+  function pickUpOrder(executiveId, orderId) {
+    fetch(`/executives/${executiveId}/orders/${orderId}/pickup`, {
+      method: 'POST',
+      headers: {
+        'X-CSRF-Token': getCSRFToken(),
+      },
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert('Failed to pickup order.');
+      }
+    })
+    .catch(error => {
+      alert('Error confirming order: ' + error);
+    });
+  }
+
+  function deliverOrder(executiveId, orderId) {
+    fetch(`/executives/${executiveId}/orders/${orderId}/deliver`, {
+      method: 'POST',
+      headers: {
+        'X-CSRF-Token': getCSRFToken(),
+      },
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert('Failed to deliver order.');
+      }
+    })
+    .catch(error => {
+      alert('Error rejecting order: ' + error);
+    });
+  }
+
+  function getCSRFToken() {
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    if (metaTag) {
+      return metaTag.content;
+    }
+    return null;
+  }
+</script>p>

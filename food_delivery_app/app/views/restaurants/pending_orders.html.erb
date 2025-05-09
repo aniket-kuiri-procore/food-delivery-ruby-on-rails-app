@@ -1,0 +1,67 @@
+<h1>Pending Orders</h1>
+
+<% @order_details.each do |order| %>
+  <div>
+    <h3>Order for Customer ID: <%= order['customer_id'] %></h3>
+    <h4>Items:</h4>
+    <ul>
+      <% order['items'].each do |item| %>
+        <li><%= item['name'] %> x <%= item['quantity'] %></li>
+      <% end %>
+    </ul>
+
+    <div>
+      <button onclick="confirmOrder('<%= @restaurant_id %>', '<%= order['order_id'] %>')">Accept</button>
+      <button onclick="rejectOrder('<%= @restaurant_id %>', '<%= order['order_id'] %>')">Reject</button>
+    </div>
+    <hr>
+  </div>
+<% end %>
+
+<script>
+  function confirmOrder(restaurantId, orderId) {
+    fetch(`/restaurants/${restaurantId}/orders/${orderId}/confirm`, {
+      method: 'POST',
+      headers: {
+        'X-CSRF-Token': getCSRFToken(),
+      },
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert('Failed to confirm order.');
+      }
+    })
+    .catch(error => {
+      alert('Error confirming order: ' + error);
+    });
+  }
+
+  function rejectOrder(restaurantId, orderId) {
+    fetch(`/restaurants/${restaurantId}/orders/${orderId}/reject`, {
+      method: 'POST',
+      headers: {
+        'X-CSRF-Token': getCSRFToken(),
+      },
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert('Failed to reject order.');
+      }
+    })
+    .catch(error => {
+      alert('Error rejecting order: ' + error);
+    });
+  }
+
+  function getCSRFToken() {
+    const metaTag = document.querySelector('meta[name="csrf-token"]');
+    if (metaTag) {
+      return metaTag.content;
+    }
+    return null;
+  }
+</script>p>
