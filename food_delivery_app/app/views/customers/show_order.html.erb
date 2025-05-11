@@ -1,7 +1,56 @@
-<h1>Order Details</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Order Details</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding-top: 20px;
+    }
 
-<p><strong>Order ID:</strong> <%= @order_details['order_id'] %></p>
-<p><strong>Customer ID:</strong> <%= @order_details['customer_id'] %></p>
-<p><strong>Restaurant ID:</strong> <%= @order_details['restaurant_id'] %></p>
-<p><strong>Status:</strong> <%= @order_details['status'] %></p>
-<p><strong>Executive ID:</strong> <%= @order_details['executive_id'] %></p>
+    .order-details-container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: left;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    p {
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    strong {
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="order-details-container">
+    <h1>Order Details</h1>
+
+    <p><strong>Order ID:</strong> <%= @order_details['order_id'] %></p>
+    <p><strong>Customer ID:</strong> <%= @order_details['customer_id'] %></p>
+    <p><strong>Restaurant ID:</strong> <%= @order_details['restaurant_id'] %></p>
+    <p><strong>Status:</strong> <%= @order_details['status'] %></p>
+    <p><strong>Executive ID:</strong> <%= @order_details['executive_id'] %></p>
+
+    </div>
+</body>
+</html>

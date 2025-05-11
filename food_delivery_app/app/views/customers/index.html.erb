@@ -1,22 +1,91 @@
-<h1>All Customers</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>All Customers</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding-top: 20px;
+    }
 
-<table>
-  <thead>
-    <tr>
-      <th>Customer ID</th>
-      <th>Name</th>
-      <th>Phone Number</th>
-      <th>Address</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @customers_list.each do |customer| %>
-      <tr>
-        <td><%= customer['customer_id'] %></td>
-        <td><%= customer['name'] %></td>
-        <td><%= customer['phone_number'] %></td>
-        <td><%= customer['address'] %></td>
-      </tr>
+    .customers-container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 800px;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .customers-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .customers-table th, .customers-table td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+
+    .customers-table th {
+      background-color: #f8f8f8;
+      font-weight: bold;
+    }
+
+    .customers-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .no-customers {
+      color: #777;
+      font-style: italic;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="customers-container">
+    <h1>All Customers</h1>
+
+    <% if @customers_list.present? %>
+      <table class="customers-table">
+        <thead>
+          <tr>
+            <th>Customer ID</th>
+            <th>Name</th>
+            <th>Phone Number</th>
+            <th>Address</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @customers_list.each do |customer| %>
+            <tr>
+              <td><%= customer['customer_id'] %></td>
+              <td><%= customer['name'] %></td>
+              <td><%= customer['phone_number'] %></td>
+              <td><%= customer['address'] %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="no-customers">No customers registered yet.</p>
     <% end %>
-  </tbody>
-</table>
+  </div>
+</body>
+</html>

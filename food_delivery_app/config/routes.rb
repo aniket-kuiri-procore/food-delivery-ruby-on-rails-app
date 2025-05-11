@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   
   get '/customers/:customer_id/restaurants/:restaurant_id', to: 'customers#get_restaurant_menu', as: 'customer_restaurant_menu' # this should have a separate call in CustomerController
 
-  post '/customers/:customer_id/orders', to: 'orders#create'
+  post '/customers/:customer_id/orders', to: 'customers#place_order'
   get '/customers/:customer_id/orders/:order_id', to: 'customers#show_order', as: 'customer_order' #get customer order details
 
   # Restaurants Endpoints
@@ -40,6 +40,8 @@ Rails.application.routes.draw do
 
 
   get '/orders', to: 'orders#index'
+  # get '/orders/:order_id' to 'orders#show'
+
   # get 'orders/assign', to: 'orders#' 
 
   get "/executives/new", to: 'executives#new'

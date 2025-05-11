@@ -158,21 +158,15 @@ class OrderHandler
 
 	def get_all_orders()
 		order_details = []
+		puts "Aniket #{@orders}"
     	@orders.each do |key, value|
     		order_detail = {}
-    		puts "ID: #{key}, status: #{value.get_status}"
+    		# puts "ID: #{key}, status: #{value.get_status}"
     		order_detail['order_id'] = key
     		order_detail['customer_id'] = value.get_customer_id
     		order_detail['executive_id'] = value.get_executive_id
     		order_detail['restaurant_id'] = value.get_restaurant_id
     		order_detail['status'] = value.get_status
-    		#food_item_arr = value.get_food_item
-            #food_items = []
-            #puts "Aniket Datatype of food_item_arr: #{food_item_arr.class}"
-            #food_item_arr.each do |item|
-            #	puts "Aniket Datatype of item: #{item.class}"
-                # puts "Aniket #{item['name']}   #{item['quantity']}"
-            #end
     		order_detail['items'] = value.get_food_item 
     		order_detail['price'] = value.get_price
     		order_details.push(order_detail)
@@ -184,11 +178,17 @@ class OrderHandler
         # de-serialize
         begin
             file_content = File.read(@filename)
+            puts "Aniket file content #{file_content}"
             order_details = JSON.parse(file_content)
+            puts "Aniket order details #{order_details}"
             order_details.each do |key, value|
-                @orders[key] = Order.new(key, value['restaurant_id'], value['customer_id'], value['items'], value['price'], value['status'], value['executive_id'])
+				converted_items = value['items'].map do |item_string|
+  					eval(item_string)
+				end
+                @orders[key] = Order.new(key, value['restaurant_id'], value['customer_id'], converted_items, value['price'], value['status'], value['executive_id'])
             end
             #get_all_orders
+            puts "Aniket @orders #{orders}"
         rescue JSON::ParserError => e
             puts "Orders json file parse error"
         rescue StandardError => e

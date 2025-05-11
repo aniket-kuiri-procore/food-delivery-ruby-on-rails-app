@@ -15,8 +15,8 @@ class OrdersController < ApplicationController
     order_handler = OrderHandler.new()
     order_handler.load
     order_handler.place_order(order_id, restaurant_id, customer_id, items, total)
-    # redirect_to customer_order_path(customer_id: customer_id,order_id: order_id)
-    render json: { message: "Order placed successfully!", order_id: order_id }, status: :created
+    redirect_to customer_order_path(customer_id: customer_id, order_id: order_id)
+    # render json: { message: "Order placed successfully!", order_id: order_id }, status: :created
   end
 
   def show

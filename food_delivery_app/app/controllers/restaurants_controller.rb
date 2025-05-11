@@ -72,9 +72,8 @@ class RestaurantsController < ApplicationController
     # for now you cna just assign it to someone by directly calling here
     executive_handler = DeliveryExecutiveHandler.new()
     executive_handler.load
-    order_handler = OrderHandler.new()
-    order_handler.load
     executive_id = executive_handler.get_available_executives()
+    # add check if executive is not available
     order_handler.assign_executive(@order_id, executive_id)
     executive_handler.update_status(executive_id)
     head :ok

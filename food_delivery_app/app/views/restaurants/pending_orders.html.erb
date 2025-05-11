@@ -1,67 +1,181 @@
-<h1>Pending Orders</h1>
-
-<% @order_details.each do |order| %>
-  <div>
-    <h3>Order for Customer ID: <%= order['customer_id'] %></h3>
-    <h4>Items:</h4>
-    <ul>
-      <% order['items'].each do |item| %>
-        <li><%= item['name'] %> x <%= item['quantity'] %></li>
-      <% end %>
-    </ul>
-
-    <div>
-      <button onclick="confirmOrder('<%= @restaurant_id %>', '<%= order['order_id'] %>')">Accept</button>
-      <button onclick="rejectOrder('<%= @restaurant_id %>', '<%= order['order_id'] %>')">Reject</button>
-    </div>
-    <hr>
-  </div>
-<% end %>
-
-<script>
-  function confirmOrder(restaurantId, orderId) {
-    fetch(`/restaurants/${restaurantId}/orders/${orderId}/confirm`, {
-      method: 'POST',
-      headers: {
-        'X-CSRF-Token': getCSRFToken(),
-      },
-    })
-    .then(response => {
-      if (response.ok) {
-        window.location.reload();
-      } else {
-        alert('Failed to confirm order.');
-      }
-    })
-    .catch(error => {
-      alert('Error confirming order: ' + error);
-    });
-  }
-
-  function rejectOrder(restaurantId, orderId) {
-    fetch(`/restaurants/${restaurantId}/orders/${orderId}/reject`, {
-      method: 'POST',
-      headers: {
-        'X-CSRF-Token': getCSRFToken(),
-      },
-    })
-    .then(response => {
-      if (response.ok) {
-        window.location.reload();
-      } else {
-        alert('Failed to reject order.');
-      }
-    })
-    .catch(error => {
-      alert('Error rejecting order: ' + error);
-    });
-  }
-
-  function getCSRFToken() {
-    const metaTag = document.querySelector('meta[name="csrf-token"]');
-    if (metaTag) {
-      return metaTag.content;
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pending Orders</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding-top: 20px;
     }
-    return null;
-  }
-</script>p>
+
+    .pending-orders-container {
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 600px;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .order-item {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #eee;
+      border-radius: 4px;
+    }
+
+    .order-item h3 {
+      color: #555;
+      margin-top: 0;
+      margin-bottom: 5px;
+    }
+
+    .order-item h4 {
+      color: #777;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+
+    .order-item ul {
+      list-style: none;
+      padding-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    .order-item li {
+      color: #555;
+      padding: 5px 0;
+      border-bottom: 1px dotted #f0f0f0;
+    }
+
+    .order-item li:last-child {
+      border-bottom: none;
+    }
+
+    .order-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .order-actions button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    .order-actions button:hover {
+      background-color: #0056b3;
+    }
+
+    hr {
+      border: 1px solid #eee;
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+
+    .no-orders {
+      color: #777;
+      font-style: italic;
+      text-align: center;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="pending-orders-container">
+    <h1>Pending Orders</h1>
+
+    <% if @order_details.present? %>
+      <% @order_details.each do |order| %>
+        <div class="order-item">
+          <h3>Order ID: <%= order['order_id'] %></h3>
+          <h3>Customer ID: <%= order['customer_id'] %></h3>
+          <h4>Items:</h4>
+          <ul>
+            <% if order['items'].present? %>
+              <% order['items'].each do |item| %>
+                <li><%= item['name'] %> x <%= item['quantity'] %></li>
+              <% end %>
+            <% else %>
+              <li>No items in this order.</li>
+            <% end %>
+          </ul>
+          <div class="order-actions">
+            <button onclick="confirmOrder('<%= @restaurant_id %>', '<%= order['order_id'] %>')">Accept</button>
+            <button onclick="rejectOrder('<%= @restaurant_id %>', '<%= order['order_id'] %>')">Reject</button>
+          </div>
+          <hr>
+        </div>
+      <% end %>
+    <% else %>
+      <p class="no-orders">No pending orders at the moment.</p>
+    <% end %>
+  </div>
+
+  <script>
+    function confirmOrder(restaurantId, orderId) {
+      fetch(`/restaurants/${restaurantId}/orders/${orderId}/confirm`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-Token': getCSRFToken(),
+        },
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          alert('Failed to confirm order.');
+        }
+      })
+      .catch(error => {
+        alert('Error confirming order: ' + error);
+      });
+    }
+
+    function rejectOrder(restaurantId, orderId) {
+      fetch(`/restaurants/${restaurantId}/orders/${orderId}/reject`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-Token': getCSRFToken(),
+        },
+      })
+      .then(response => {
+        if (response.ok) {
+          window.location.reload();
+        } else {
+          alert('Failed to reject order.');
+        }
+      })
+      .catch(error => {
+        alert('Error rejecting order: ' + error);
+      });
+    }
+
+    function getCSRFToken() {
+      const metaTag = document.querySelector('meta[name="csrf-token"]');
+      if (metaTag) {
+        return metaTag.content;
+      }
+      return null;
+    }
+  </script>
+</body>
+</html>

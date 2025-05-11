@@ -75,9 +75,31 @@ class CustomersController < ApplicationController
     end
   end
 
+  def place_order
+    # here first print the data that is coming
+    puts "Received parameters in create action: #{params.inspect}"
+    # the values are items, total, customer_id, restaurant_id
+    # then using order handler add the order details that will persist it. 
+    # you may have to change the backend implementations here. Work accordingly.
+    order_id = SecureRandom.uuid
+    items = params[:items]
+    total = params[:total]
+    customer_id = params[:customer_id]
+    restaurant_id = params[:restaurant_id]
+    order_handler = OrderHandler.new()
+    order_handler.load
+    order_handler.place_order(order_id, restaurant_id, customer_id, items, total)
+    # redirect_to customer_order_path(customer_id: customer_id, order_id: order_id)
+    render json: { message: "Order placed successfully!", order_id: order_id }, status: :created
+  end
+
   def show_order
     customer_id = params[:customer_id]
     order_id = params[:order_id]
+    puts "Aniket"
+    puts "#{customer_id}"
+    puts "#{order_id}"
+    puts "Aniket"
     # here you have to display the following
     # order id
     # restaurant id
